@@ -30,4 +30,8 @@ ENV/
 .idea/
 
 # Misc
-.DS_Store 
+.DS_Store
+
+# Environment variables
+.env
+.env.* 
