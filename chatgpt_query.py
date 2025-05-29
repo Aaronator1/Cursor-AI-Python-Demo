@@ -12,7 +12,8 @@ def setup_openai():
             f"{Fore.RED}Error: OPENAI_API_KEY not found in environment variables. "
             f"Please create a .env file with your API key.{Style.RESET_ALL}"
         )
-    return OpenAI(api_key=api_key)
+    client = OpenAI()  # The API key will be read from environment variable
+    return client
 
 def ask_chatgpt(question, model="gpt-3.5-turbo"):
     """Send a query to ChatGPT and get the response."""
@@ -24,7 +25,9 @@ def ask_chatgpt(question, model="gpt-3.5-turbo"):
             model=model,
             messages=[
                 {"role": "user", "content": question}
-            ]
+            ],
+            temperature=0.7,
+            max_tokens=150
         )
         
         # Extract and return the response text
@@ -41,18 +44,24 @@ def main():
     print(f"{Fore.YELLOW}Type 'quit' to exit{Style.RESET_ALL}\n")
     
     while True:
-        # Get user input
-        question = input(f"{Fore.GREEN}Your question: {Style.RESET_ALL}")
-        
-        # Check if user wants to quit
-        if question.lower() in ['quit', 'exit', 'q']:
+        try:
+            # Get user input
+            question = input(f"{Fore.GREEN}Your question: {Style.RESET_ALL}")
+            
+            # Check if user wants to quit
+            if question.lower() in ['quit', 'exit', 'q']:
+                print(f"\n{Fore.CYAN}Goodbye!{Style.RESET_ALL}")
+                break
+            
+            # Get and print the response
+            print(f"\n{Fore.BLUE}ChatGPT's response:{Style.RESET_ALL}")
+            response = ask_chatgpt(question)
+            print(f"{response}\n")
+        except KeyboardInterrupt:
             print(f"\n{Fore.CYAN}Goodbye!{Style.RESET_ALL}")
             break
-        
-        # Get and print the response
-        print(f"\n{Fore.BLUE}ChatGPT's response:{Style.RESET_ALL}")
-        response = ask_chatgpt(question)
-        print(f"{response}\n")
+        except Exception as e:
+            print(f"\n{Fore.RED}An error occurred: {str(e)}{Style.RESET_ALL}\n")
 
 if __name__ == "__main__":
     main() 
